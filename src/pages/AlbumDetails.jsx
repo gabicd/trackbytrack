@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating';
-import spotifyService from '../services/spotifyService';
+import spotifyService, { formatDuration } from '../services/spotifyService';
 import { useDiscogsData } from '../hooks/useDiscogsData';
 import iconHeadphoneActive from '../assets/icon_headphone-active.svg';
 import iconHeadphoneInactive from '../assets/icon_headphone-inactive.svg';
@@ -55,7 +55,8 @@ const mockAlbumData = {
         }
       ]
     }
-  ]
+  ],
+  totalDurationMs: 9240000
 };
 
 function ActionButton({ iconActive, iconInactive, label, isActive, onClick }) {
@@ -115,11 +116,12 @@ export default function AlbumDetails() {
           criticsRating: mockAlbumData.criticsRating,
           criticsCount: mockAlbumData.criticsCount,
           releaseDate: data.releaseDate || mockAlbumData.releaseDate,
-          label: mockAlbumData.label,
-          genres: mockAlbumData.genres,
+          label: data.label || mockAlbumData.label,
+          genres: data.artistGenres?.length > 0 ? data.artistGenres : mockAlbumData.genres,
           streamingLinks: mockAlbumData.streamingLinks,
           discs: mockAlbumData.discs,
-          totalTracks: data.totalTracks
+          totalTracks: data.totalTracks,
+          totalDurationMs: data.totalDurationMs
         });
         setError(null);
       } catch (err) {
@@ -264,6 +266,12 @@ export default function AlbumDetails() {
               <span className="detail-value">
                 {discogsLoading ? 'Carregando...' : 
                   (discogsData?.tracklist?.length || data.totalTracks || 'N/A')}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Duração:</span>
+              <span className="detail-value">
+                {formatDuration(data.totalDurationMs)}
               </span>
             </div>
           </div>

@@ -157,13 +157,46 @@ class SpotifyService {
     }
 
     try {
-      const data = await this.makeRequest(`/albums/${albumId}`);
-      return this.normalizeAlbum(data);
+      const albumData = await this.makeRequest(`/albums/${albumId}`);
+      
+      // Buscar gêneros do primeiro artista
+      const primaryArtistId = albumData.artists[0]?.id;
+      let artistGenres = [];
+      if (primaryArtistId) {
+        const artistData = await this.makeRequest(`/artists/${primaryArtistId}`);
+        artistGenres = artistData.genres || [];
+      }
+      
+      // Calcular duração total
+      const totalDurationMs = albumData.tracks?.items?.reduce((acc, track) => 
+        acc + (track.duration_ms || 0), 0
+      ) || 0;
+      
+      return {
+        ...this.normalizeAlbum(albumData),
+        label: albumData.label,
+        totalDurationMs,
+        artistGenres,
+        tracks: albumData.tracks?.items || []
+      };
     } catch (error) {
       console.error('Error fetching album:', error);
       throw error;
     }
   }
+}
+
+export function formatDuration(ms) {
+  if (!ms || ms <= 0) return 'N/A';
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
 export default new SpotifyService();
