@@ -516,3 +516,28 @@ height: 1.125rem;
     min-width: 70px;
   }
 }
+
+/* Error State */
+.album-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 48px;
+  text-align: center;
+}
+
+.album-error p {
+  color: #666666;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+/* No Tracklist Message */
+.no-tracklist {
+  text-align: center;
+  color: #666666;
+  padding: 32px;
+  font-size: 14px;
+}
