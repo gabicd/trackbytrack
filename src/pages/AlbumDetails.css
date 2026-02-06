@@ -171,6 +171,18 @@
   text-decoration-color: #000000;
 }
 
+.detail-value.styles {
+  display: inline;
+  font-size: 12px;
+  color: #555555;
+  margin-left: 4px;
+}
+
+.style-link {
+  color: #555555;
+  text-decoration-color: #999999;
+}
+
 /* Action Buttons */
 .action-buttons {
   display: flex;

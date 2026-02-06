@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating';
 import spotifyService from '../services/spotifyService';
+import { useDiscogsData } from '../hooks/useDiscogsData';
 import iconHeadphoneActive from '../assets/icon_headphone-active.svg';
 import iconHeadphoneInactive from '../assets/icon_headphone-inactive.svg';
 import heartActive from '../assets/heart-active.svg';
@@ -11,9 +12,11 @@ import tolistenInactive from '../assets/tolisten-inactive.svg';
 import headphone from '../assets/icon_headphone.png';
 import './AlbumDetails.css';
 
-// Spotify API Credentials via variáveis de ambiente
+// API Credentials via variáveis de ambiente
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
+const DISCOGS_CONSUMER_KEY = import.meta.env.VITE_DISCOGS_CONSUMER_KEY;
+const DISCOGS_CONSUMER_SECRET = import.meta.env.VITE_DISCOGS_CONSUMER_SECRET;
 
 const mockAlbumData = {
   title: "Fancy Some More?",
@@ -79,6 +82,14 @@ export default function AlbumDetails() {
   const [listened, setListened] = useState(false);
   const [liked, setLiked] = useState(false);
   const [toListen, setToListen] = useState(false);
+
+  // Buscar dados da Discogs (deve ser chamado antes de qualquer return!)
+  const { discogsData, loading: discogsLoading } = useDiscogsData(
+    albumData?.title || '',
+    albumData?.artist || '',
+    DISCOGS_CONSUMER_KEY,
+    DISCOGS_CONSUMER_SECRET
+  );
 
   useEffect(() => {
     const fetchAlbum = async () => {
@@ -207,17 +218,52 @@ export default function AlbumDetails() {
             </div>
             <div className="detail-row">
               <span className="detail-label">Gravadora:</span>
-              <span className="detail-value">{data.label}</span>
+              <span className="detail-value">
+                {discogsLoading ? 'Carregando...' : 
+                  (discogsData?.labels?.join(', ') || data.label || 'Informações não disponíveis')}
+              </span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Gêneros:</span>
               <span className="detail-value genres">
-                {data.genres.map((genre, index) => (
-                  <span key={index}>
-                    <a href="#" className="genre-link">{genre}</a>
-                    {index < data.genres.length - 1 ? ', ' : ''}
-                  </span>
-                ))}
+                {discogsLoading ? (
+                  'Carregando...'
+                ) : discogsData?.genres?.length > 0 ? (
+                  <>
+                    {discogsData.genres.map((genre, index) => (
+                      <span key={index}>
+                        <a href="#" className="genre-link">{genre}</a>
+                        {index < discogsData.genres.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                    {discogsData?.styles?.length > 0 && (
+                      <span className="detail-value styles">
+                        {discogsData.styles.map((style, index) => (
+                          <span key={index}>
+                            <a href="#" className="genre-link style-link">{style}</a>
+                            {index < discogsData.styles.length - 1 ? ', ' : ''}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </>
+                ) : data.genres?.length > 0 ? (
+                  data.genres.map((genre, index) => (
+                    <span key={index}>
+                      <a href="#" className="genre-link">{genre}</a>
+                      {index < data.genres.length - 1 ? ', ' : ''}
+                    </span>
+                  ))
+                ) : (
+                  'Informações não disponíveis'
+                )}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Número de Tracks:</span>
+              <span className="detail-value">
+                {discogsLoading ? 'Carregando...' : 
+                  (discogsData?.tracklist?.length || data.totalTracks || 'N/A')}
               </span>
             </div>
           </div>
