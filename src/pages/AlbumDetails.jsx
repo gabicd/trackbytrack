@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating';
+import spotifyService from '../services/spotifyService';
 import iconHeadphoneActive from '../assets/icon_headphone-active.svg';
 import iconHeadphoneInactive from '../assets/icon_headphone-inactive.svg';
 import heartActive from '../assets/heart-active.svg';
@@ -8,6 +10,10 @@ import tolistenActive from '../assets/tolisten-active.svg';
 import tolistenInactive from '../assets/tolisten-inactive.svg';
 import headphone from '../assets/icon_headphone.png';
 import './AlbumDetails.css';
+
+// Spotify API Credentials via variáveis de ambiente
+const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
 const mockAlbumData = {
   title: "Fancy Some More?",
@@ -66,25 +72,91 @@ function ActionButton({ iconActive, iconInactive, label, isActive, onClick }) {
 }
 
 export default function AlbumDetails() {
+  const { id } = useParams();
+  const [albumData, setAlbumData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [listened, setListened] = useState(false);
   const [liked, setLiked] = useState(false);
   const [toListen, setToListen] = useState(false);
 
+  useEffect(() => {
+    const fetchAlbum = async () => {
+      if (!id) {
+        setAlbumData(mockAlbumData);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        spotifyService.setCredentials(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET);
+        const data = await spotifyService.getAlbum(id);
+        
+        // Mapear dados da API para o formato usado no componente
+        setAlbumData({
+          title: data.name,
+          artist: data.artists.map(a => a.name).join(', '),
+          coverUrl: data.images[0]?.url || mockAlbumData.coverUrl,
+          userRating: mockAlbumData.userRating,
+          usersRating: mockAlbumData.usersRating,
+          usersCount: mockAlbumData.usersCount,
+          criticsRating: mockAlbumData.criticsRating,
+          criticsCount: mockAlbumData.criticsCount,
+          releaseDate: data.releaseDate || mockAlbumData.releaseDate,
+          label: mockAlbumData.label,
+          genres: mockAlbumData.genres,
+          streamingLinks: mockAlbumData.streamingLinks,
+          discs: mockAlbumData.discs,
+          totalTracks: data.totalTracks
+        });
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching album:', err);
+        setError('Não foi possível carregar os dados do álbum');
+        setAlbumData(mockAlbumData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAlbum();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="album-details-page">
+        <div className="album-loading">
+          <div className="album-loading-spinner"></div>
+          <p>Carregando álbum... </p>
+        </div>
+      </div>
+    );
+  }
+
+  const data = albumData || mockAlbumData;
+
   return (
     <div className="album-details-page">
+      {error && (
+        <div className="album-error-banner">
+          {error}
+        </div>
+      )}
+      
       {/* Top Section - Album Info Grid */}
       <div className="album-info-grid">
         {/* Left Column - Album Cover */}
         <div className="album-cover-section">
           <img 
-            src={mockAlbumData.coverUrl} 
-            alt={mockAlbumData.title}
+            src={data.coverUrl} 
+            alt={data.title}
             className="album-cover"
           />
           <div className="streaming-links">
             <span className="streaming-label">Ouça em</span>
             <div className="streaming-icons">
-              {mockAlbumData.streamingLinks.map((link, index) => (
+              {data.streamingLinks.map((link, index) => (
                 <a 
                   key={index}
                   href={link.url}
@@ -100,27 +172,27 @@ export default function AlbumDetails() {
 
         {/* Center Column - Album Info */}
         <div className="album-info-section">
-          <h1 className="album-title">{mockAlbumData.title}</h1>
-          <p className="album-artist">{mockAlbumData.artist}</p>
+          <h1 className="album-title">{data.title}</h1>
+          <p className="album-artist">{data.artist}</p>
           
           <div className="ratings-section">
             <div className="rating-item">
               <span className="rating-label">Sua avaliação:</span>
-              <StarRating rating={mockAlbumData.userRating} />
+              <StarRating rating={data.userRating} />
             </div>
             
             <div className="rating-item">
               <span className="rating-label">
-                Média dos users ({mockAlbumData.usersCount}):
+                Média dos users ({data.usersCount}):
               </span>
-              <StarRating rating={mockAlbumData.usersRating} />
+              <StarRating rating={data.usersRating} />
             </div>
             
             <div className="rating-item">
               <span className="rating-label">
-                Média da crítica ({mockAlbumData.criticsCount}):
+                Média da crítica ({data.criticsCount}):
               </span>
-              <StarRating rating={mockAlbumData.criticsRating} />
+              <StarRating rating={data.criticsRating} />
             </div>
           </div>
         </div>
@@ -131,19 +203,19 @@ export default function AlbumDetails() {
             <h3 className="details-title">Detalhes</h3>
             <div className="detail-row">
               <span className="detail-label">Lançamento:</span>
-              <span className="detail-value">{mockAlbumData.releaseDate}</span>
+              <span className="detail-value">{data.releaseDate}</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Gravadora:</span>
-              <span className="detail-value">{mockAlbumData.label}</span>
+              <span className="detail-value">{data.label}</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Gêneros:</span>
               <span className="detail-value genres">
-                {mockAlbumData.genres.map((genre, index) => (
+                {data.genres.map((genre, index) => (
                   <span key={index}>
                     <a href="#" className="genre-link">{genre}</a>
-                    {index < mockAlbumData.genres.length - 1 ? ', ' : ''}
+                    {index < data.genres.length - 1 ? ', ' : ''}
                   </span>
                 ))}
               </span>
@@ -192,7 +264,7 @@ export default function AlbumDetails() {
       <div className="tracklist-section">
         <h3 className="tracklist-title">Tracklist</h3>
         
-        {mockAlbumData.discs.map((disc) => (
+        {data.discs.map((disc) => (
           <div key={disc.number} className="disc-section">
             <h3 className="disc-label">Disco {disc.number}</h3>
             <div className="tracks-list">

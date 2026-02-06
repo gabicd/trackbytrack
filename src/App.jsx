@@ -18,7 +18,7 @@ function App() {
           <Route path="/profile" element={<div>Perfil</div>} />
           <Route path="/settings" element={<div>Configurações</div>} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/album" element={<AlbumDetails />} />
+          <Route path="/album/:id" element={<AlbumDetails />} />
         </Routes>
       </main>
     </div>

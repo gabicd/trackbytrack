@@ -150,6 +150,20 @@ class SpotifyService {
 
     return allAlbums;
   }
+
+  async getAlbum(albumId) {
+    if (!albumId) {
+      throw new Error('Album ID is required');
+    }
+
+    try {
+      const data = await this.makeRequest(`/albums/${albumId}`);
+      return this.normalizeAlbum(data);
+    } catch (error) {
+      console.error('Error fetching album:', error);
+      throw error;
+    }
+  }
 }
 
 export default new SpotifyService();

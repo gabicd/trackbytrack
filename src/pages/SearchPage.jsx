@@ -1,6 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAlbumSearch } from '../hooks/useAlbumSearch';
-import SearchInput from '../components/SearchInput';
 import AlbumCard from '../components/AlbumCard';
 import Pagination from '../components/Pagination';
 import './SearchPage.css';
