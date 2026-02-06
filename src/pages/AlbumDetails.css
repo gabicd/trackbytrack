@@ -541,3 +541,9 @@ height: 1.125rem;
   padding: 32px;
   font-size: 14px;
 }
+
+.streaming-icon-img {
+  width: 1.3125rem;
+  height: 1.3125rem;
+  aspect-ratio: 1/1;  
+}

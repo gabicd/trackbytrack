@@ -14,7 +14,7 @@ export default function StarRating({ rating }) {
         }
     }
 
-    const tooltipText = rating && rating > 0 ? `${rating} / 5` : 'Sem avaliação';
+    const tooltipText = rating && rating > 0 ? `${rating}` : 'Sem avaliação';
 
     return (
         <div className="starRatingContainer">

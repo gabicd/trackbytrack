@@ -10,6 +10,7 @@ import heartInactive from '../assets/heart-inactive.svg';
 import tolistenActive from '../assets/tolisten-active.svg';
 import tolistenInactive from '../assets/tolisten-inactive.svg';
 import headphone from '../assets/icon_headphone.png';
+import spotifyLogo from '../assets/spotify-logo.png';
 import './AlbumDetails.css';
 
 // API Credentials via variáveis de ambiente
@@ -164,11 +165,13 @@ export default function AlbumDetails() {
             <span className="streaming-label">Ouça em</span>
             <div className="streaming-icons">
               <a 
-                href="#"
+                href={`https://open.spotify.com/album/${id}`}
                 className="streaming-icon"
                 title="Spotify"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                S
+                <img className='streaming-icon-img' src={spotifyLogo} alt="Spotify" />
               </a>
             </div>
           </div>
@@ -190,10 +193,6 @@ export default function AlbumDetails() {
               <StarRating rating={null} />
             </div>
             
-            <div className="rating-item">
-              <span className="rating-label">Média da crítica:</span>
-              <StarRating rating={null} />
-            </div>
           </div>
         </div>
 
