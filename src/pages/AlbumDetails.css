@@ -1,0 +1,463 @@
+.album-details-page {
+  padding: 24px var(--layout-padding);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   ALBUM INFO GRID - Top Section
+   ============================================ */
+
+.album-info-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 520px;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+/* ============================================
+   LEFT COLUMN - Album Cover
+   ============================================ */
+
+.album-cover-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.album-cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.streaming-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.streaming-label {
+  font-size: 14px;
+  color: #666666;
+  font-weight: 500;
+}
+
+.streaming-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.streaming-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f0ff;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #7418BA;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.streaming-icon:hover {
+  background-color: #e9e3ff;
+}
+
+/* ============================================
+   CENTER COLUMN - Album Info & Ratings
+   ============================================ */
+
+.album-info-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.album-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 8px 0;
+}
+
+.album-artist {
+  font-size: 18px;
+  color: #000000;
+  margin: 0 0 24px 0;
+  font-weight: 500;
+}
+
+.ratings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rating-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-label {
+  font-size: 14px;
+  color: #000000;
+  font-weight: 500;
+}
+
+/* ============================================
+   RIGHT COLUMN - Details Card & Actions
+   ============================================ */
+
+.details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.details-card {
+  background-color: #C77DFF;
+  border-radius: 12px;
+  padding: 20px;
+  color: #000000;
+}
+
+.details-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #000000;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.detail-value.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.genre-link {
+  color: #000000;
+  text-decoration: underline;
+  text-decoration-color: #7418BA;
+}
+
+.genre-link:hover {
+  text-decoration-color: #000000;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+}
+
+.action-buttons-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+}
+
+.action-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.action-label {
+  font-size: 12px;
+  color: #000000;
+  font-weight: 500;
+}
+
+.log-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #7418BA;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px 20px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background-color 0.2s ease;
+  min-width: 90px;
+  height: auto;
+  margin-left: auto;
+}
+
+.log-button:hover {
+  background-color: #5a1396;
+}
+
+.log-icon {
+  font-size: 20px;
+}
+
+.log-icon-image {
+width: 1.07425rem;
+height: 1.125rem;
+}
+
+/* ============================================
+   TRACKLIST SECTION
+   ============================================ */
+
+.tracklist-section {
+  margin-top: 48px;
+  
+}
+
+.tracklist-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #7418BA;
+  margin: 0 0 24px 0;
+  border-bottom: 1px solid #7418BA;
+}
+
+.disc-section {
+  margin-bottom: 32px;
+}
+
+.disc-label {
+  
+  font-size: 14px;
+  color: #666666;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.track-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 200px 60px 140px 100px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+  gap: 16px;
+}
+
+.track-number {
+  font-size: 14px;
+  color: #666666;
+  text-align: right;
+}
+
+.track-title {
+  font-size: 14px;
+  color: #000000;
+  font-weight: 500;
+}
+
+.track-artists {
+  font-size: 14px;
+  color: #666666;
+}
+
+.track-duration {
+  font-size: 14px;
+  color: #666666;
+  text-align: center;
+}
+
+.track-rating {
+  display: flex;
+  justify-content: center;
+}
+
+.track-notes-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #7418BA;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.track-notes-button:hover {
+  text-decoration-color: #7418BA;
+}
+
+.track-notes-button svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .album-info-grid {
+    grid-template-columns: 240px 1fr 380px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 992px) {
+  .album-info-grid {
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+  }
+
+  .details-section {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .details-card {
+    flex: 1;
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .album-details-page {
+    padding: 16px;
+  }
+
+  .album-info-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .album-cover-section {
+    align-items: center;
+  }
+
+  .album-cover {
+    max-width: 280px;
+  }
+
+  .album-title {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .album-artist {
+    text-align: center;
+  }
+
+  .details-section {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons-group {
+    gap: 16px;
+  }
+
+  .track-row {
+    grid-template-columns: 30px 1fr 80px;
+    gap: 8px;
+  }
+
+  .track-artists,
+  .track-rating {
+    display: none;
+  }
+
+  .track-duration {
+    text-align: right;
+  }
+
+  .track-notes-button {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    padding-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .album-title {
+    font-size: 20px;
+  }
+
+  .details-card {
+    padding: 16px;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .action-button,
+  .log-button {
+    flex: 1;
+    min-width: 70px;
+  }
+}
