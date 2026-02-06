@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import AlbumDetails from './pages/AlbumDetails'
+import SearchPage from './pages/SearchPage'
 import './App.css'
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
           <Route path="/community" element={<div>Comunidade</div>} />
           <Route path="/profile" element={<div>Perfil</div>} />
           <Route path="/settings" element={<div>Configurações</div>} />
-          <Route path="/search" element={<div>Busca</div>} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/album" element={<AlbumDetails />} />
         </Routes>
       </main>
