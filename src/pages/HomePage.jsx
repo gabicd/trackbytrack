@@ -5,7 +5,7 @@ function HomePage() {
   return (
     <div className="home-page">
       <section className="trending-section">
-        <h2 className="section-title">Trending</h2>
+        <h2 className="home-section-title">Trending</h2>
         <div className='albumGrid'>
             <AlbumCard 
                 imgSrc={"https://upload.wikimedia.org/wikipedia/pt/9/9d/Zara_Larsson_-_Midnight_Sun.png"}

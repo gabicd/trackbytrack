@@ -96,6 +96,12 @@ export default function Navbar({ onSearch }) {
         <div className="navbar-links">
           <button
             className="navbar-link"
+            onClick={() => navigate('/')}
+          >
+            Home
+          </button>          
+          <button
+            className="navbar-link"
             onClick={() => navigate('/lists')}
           >
             Listas
@@ -105,12 +111,6 @@ export default function Navbar({ onSearch }) {
             onClick={() => navigate('/friends')}
           >
             Amigos
-          </button>
-          <button
-            className="navbar-link"
-            onClick={() => navigate('/')}
-          >
-            Home
           </button>
         </div>
       </div>
