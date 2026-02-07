@@ -17,8 +17,6 @@ import './AlbumDetails.css';
 // API Credentials via variáveis de ambiente
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
-const DISCOGS_CONSUMER_KEY = import.meta.env.VITE_DISCOGS_CONSUMER_KEY;
-const DISCOGS_CONSUMER_SECRET = import.meta.env.VITE_DISCOGS_CONSUMER_SECRET;
 
 function ActionButton({ iconActive, iconInactive, label, isActive, onClick }) {
   return (
@@ -102,9 +100,7 @@ export default function AlbumDetails() {
   // Buscar dados da Discogs (deve ser chamado antes de qualquer return!)
   const { discogsData, loading: discogsLoading } = useDiscogsData(
     albumData?.title || '',
-    albumData?.artist || '',
-    DISCOGS_CONSUMER_KEY,
-    DISCOGS_CONSUMER_SECRET
+    albumData?.artist || ''
   );
 
   useEffect(() => {

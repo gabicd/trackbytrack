@@ -1,40 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import discogsService from '../services/discogsService';
+import { searchDiscogsRelease } from '../services/discogsApi';
 
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 horas
-
-class DiscogsCache {
-  constructor() {
-    this.cache = new Map();
-  }
-
-  get(key) {
-    const cached = this.cache.get(key);
-    if (!cached) return null;
-    
-    if (Date.now() - cached.timestamp > CACHE_TTL) {
-      this.cache.delete(key);
-      return null;
-    }
-    
-    return cached.data;
-  }
-
-  set(key, data) {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
-  }
-
-  clear() {
-    this.cache.clear();
-  }
-}
-
-const globalCache = new DiscogsCache();
-
-export function useDiscogsData(albumName, artistName, consumerKey, consumerSecret) {
+export function useDiscogsData(albumName, artistName) {
   const [state, setState] = useState({
     data: null,
     loading: false,
@@ -44,7 +11,7 @@ export function useDiscogsData(albumName, artistName, consumerKey, consumerSecre
   const abortControllerRef = useRef(null);
 
   const fetchDiscogsData = useCallback(async () => {
-    if (!albumName.trim() || !consumerKey || !consumerSecret) {
+    if (!albumName.trim()) {
       setState({
         data: null,
         loading: false,
@@ -61,28 +28,22 @@ export function useDiscogsData(albumName, artistName, consumerKey, consumerSecre
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
-      // Criar chave de cache
-      const cacheKey = `${albumName}-${artistName || ''}`.toLowerCase();
+      // Buscar via backend (que já tem cache integrado)
+      const response = await searchDiscogsRelease(artistName, albumName);
       
-      // Verificar cache
-      const cached = globalCache.get(cacheKey);
-      
-      if (cached) {
-        setState({
-          data: cached,
-          loading: false,
-          error: null
-        });
-        return;
-      }
-
-      // Buscar na API
-      discogsService.setCredentials(consumerKey, consumerSecret);
-      const data = await discogsService.getAlbumInfo(albumName, artistName);
-      
-      // Salvar no cache
-      if (data) {
-        globalCache.set(cacheKey, data);
+      // Extrair dados do primeiro resultado
+      let data = null;
+      if (response.results && response.results.length > 0) {
+        const release = response.results[0];
+        data = {
+          id: release.id,
+          title: release.title,
+          year: release.year,
+          genres: release.genre || [],
+          styles: release.style || [],
+          labels: [...new Set((release.label || []).map(l => typeof l === 'string' ? l : l.name))].slice(0, 3),
+          fromCache: response.fromCache
+        };
       }
 
       setState({
@@ -100,7 +61,7 @@ export function useDiscogsData(albumName, artistName, consumerKey, consumerSecre
         });
       }
     }
-  }, [albumName, artistName, consumerKey, consumerSecret]);
+  }, [albumName, artistName]);
 
   useEffect(() => {
     fetchDiscogsData();
@@ -113,11 +74,8 @@ export function useDiscogsData(albumName, artistName, consumerKey, consumerSecre
   }, [fetchDiscogsData]);
 
   const refetch = useCallback(() => {
-    // Limpar cache específico e buscar novamente
-    const cacheKey = `${albumName}-${artistName || ''}`.toLowerCase();
-    globalCache.cache.delete(cacheKey);
     fetchDiscogsData();
-  }, [fetchDiscogsData, albumName, artistName]);
+  }, [fetchDiscogsData]);
 
   return {
     discogsData: state.data,
