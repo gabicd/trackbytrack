@@ -222,8 +222,13 @@
 
 .action-label {
   font-size: 12px;
-  color: #000000;
+  color: #7C7C7C;
   font-weight: 500;
+}
+
+.action-label.active {
+  color: #7418BA;
+  font-weight: 600;
 }
 
 .log-button {

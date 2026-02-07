@@ -31,7 +31,7 @@ function ActionButton({ iconActive, iconInactive, label, isActive, onClick }) {
         alt={label}
         className="action-icon"
       />
-      <span className="action-label">{label}</span>
+      <span className={`action-label ${isActive ? 'active' : ''}`}>{label}</span>
     </button>
   );
 }
