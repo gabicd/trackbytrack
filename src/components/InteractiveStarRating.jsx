@@ -63,9 +63,7 @@ export default function InteractiveStarRating({ rating, onRatingChange, size = 2
       <div className="stars-container">
         {[1, 2, 3, 4, 5].map(starIndex => renderStar(starIndex))}
       </div>
-      {rating > 0 && (
-        <span className="rating-value">{rating}/5</span>
-      )}
+
     </div>
   );
 }

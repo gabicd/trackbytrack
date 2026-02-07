@@ -102,8 +102,19 @@ class SpotifyService {
       })),
       images: album.images,
       releaseDate: album.release_date,
+      releaseYear: album.release_date ? new Date(album.release_date).getFullYear() : null,
+      albumType: this.translateAlbumType(album.album_type),
       totalTracks: album.total_tracks
     };
+  }
+
+  translateAlbumType(type) {
+    const translations = {
+      'album': 'LP',
+      'single': 'Single',
+      'compilation': 'Compilação'
+    };
+    return translations[type] || type;
   }
 
   async searchAlbums(query) {

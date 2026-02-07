@@ -111,6 +111,8 @@ export default function SearchPage() {
                   imgSrc={album.images[0]?.url || 'https://via.placeholder.com/300'}
                   albumTitle={album.name}
                   artistName={album.artists.map(a => a.name).join(', ')}
+                  releaseYear={album.releaseYear}
+                  albumType={album.albumType}
                   onClick={() => handleAlbumClick(album.id)}
                 />
               ))}

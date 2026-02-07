@@ -90,6 +90,14 @@ export default function AlbumDetails() {
   const [liked, setLiked] = useState(false);
   const [toListen, setToListen] = useState(false);
   const [userRating, setUserRating] = useState(0);
+  const [trackRatings, setTrackRatings] = useState({});
+
+  const handleTrackRatingChange = (trackKey, rating) => {
+    setTrackRatings(prev => ({
+      ...prev,
+      [trackKey]: rating
+    }));
+  };
 
   // Buscar dados da Discogs (deve ser chamado antes de qualquer return!)
   const { discogsData, loading: discogsLoading } = useDiscogsData(
@@ -209,8 +217,13 @@ export default function AlbumDetails() {
               <InteractiveStarRating 
                 rating={userRating}
                 onRatingChange={setUserRating}
-                size={20}
+                
               />
+            {/*
+            {userRating > 0 && (
+              <span className="rating-value">{userRating}/5</span>
+            )}
+            */}  
             </div>
             
             <div className="rating-item">
@@ -341,7 +354,11 @@ export default function AlbumDetails() {
                   </span>
                   <span className="track-duration">{track.duration}</span>
                   <div className="track-rating">
-                    <StarRating rating={track.rating} />
+                    <InteractiveStarRating 
+                      rating={trackRatings[track.number] || 0}
+                      onRatingChange={(rating) => handleTrackRatingChange(track.number, rating)}
+                      size={12}
+                    />
                   </div>
                   <button className="track-notes-button">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -369,7 +386,11 @@ export default function AlbumDetails() {
                       </span>
                       <span className="track-duration">{track.duration}</span>
                       <div className="track-rating">
-                        <StarRating rating={track.rating} />
+                        <InteractiveStarRating 
+                          rating={trackRatings[`${disc.number}-${track.number}`] || 0}
+                          onRatingChange={(rating) => handleTrackRatingChange(`${disc.number}-${track.number}`, rating)}
+                          size={16}
+                        />
                       </div>
                       <button className="track-notes-button">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">

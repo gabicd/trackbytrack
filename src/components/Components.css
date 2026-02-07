@@ -277,6 +277,15 @@ aspect-ratio: 1/1;
   white-space: nowrap;
 }
 
+.cardMeta {
+  font-size: 13px;
+  color: #888888;
+  margin: 4px 0 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ============================================
    STAR RATING COMPONENT
    ============================================ */
