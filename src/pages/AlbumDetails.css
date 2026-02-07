@@ -264,28 +264,31 @@ height: 1.125rem;
    TRACKLIST SECTION
    ============================================ */
 
+.disc-background {
+  background-color: #ECD3FF;
+  padding: 8px 8px;
+  border-radius: 6px;
+  display: block;
+}
+   
 .tracklist-section {
   margin-top: 48px;
   
 }
 
+
 .tracklist-title {
   font-size: 24px;
   font-weight: 600;
   color: #7418BA;
-  margin: 0 0 24px 0;
+  margin-bottom: 6px;
   border-bottom: 1px solid #7418BA;
 }
 
-.disc-section {
-  margin-bottom: 32px;
-}
-
 .disc-label {
-  
   font-size: 14px;
   color: #666666;
-  margin: 0 0 16px 0;
+  margin: 0;
   font-weight: 500;
 }
 
@@ -547,3 +550,4 @@ height: 1.125rem;
   height: 1.3125rem;
   aspect-ratio: 1/1;  
 }
+

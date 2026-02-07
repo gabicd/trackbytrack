@@ -35,6 +35,25 @@ function ActionButton({ iconActive, iconInactive, label, isActive, onClick }) {
   );
 }
 
+// Função auxiliar para formatar data no formato brasileiro
+const formatReleaseDate = (dateString) => {
+  if (!dateString) return null;
+  
+  const months = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${day} de ${month}, ${year}`;
+};
+
 // Processar tracks da API Spotify e agrupar por disco
 const processTracks = (tracks) => {
   if (!tracks || tracks.length === 0) return [];
@@ -204,7 +223,7 @@ export default function AlbumDetails() {
             <div className="detail-row">
               <span className="detail-label">Lançamento:</span>
               <span className="detail-value">
-                {data.releaseDate || 'Não foi possível encontrar informações'}
+                {formatReleaseDate(data.releaseDate) || 'Não foi possível encontrar informações'}
               </span>
             </div>
             
@@ -331,7 +350,9 @@ export default function AlbumDetails() {
             // Múltiplos discos - com headers
             data.discs.map((disc) => (
               <div key={disc.number} className="disc-section">
-                <h3 className="disc-label">Disco {disc.number}</h3>
+                <div className='disc-background'>
+                  <h3 className="disc-label">Disco {disc.number}</h3>
+                </div>
                 <div className="tracks-list">
                   {disc.tracks.map((track) => (
                     <div key={`${disc.number}-${track.number}`} className="track-row">
