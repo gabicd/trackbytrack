@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating';
+import InteractiveStarRating from '../components/InteractiveStarRating';
 import spotifyService, { formatDuration } from '../services/spotifyService';
 import { useDiscogsData } from '../hooks/useDiscogsData';
 import iconHeadphoneActive from '../assets/icon_headphone-active.svg';
@@ -88,6 +89,7 @@ export default function AlbumDetails() {
   const [listened, setListened] = useState(false);
   const [liked, setLiked] = useState(false);
   const [toListen, setToListen] = useState(false);
+  const [userRating, setUserRating] = useState(0);
 
   // Buscar dados da Discogs (deve ser chamado antes de qualquer return!)
   const { discogsData, loading: discogsLoading } = useDiscogsData(
@@ -204,7 +206,11 @@ export default function AlbumDetails() {
           <div className="ratings-section">
             <div className="rating-item">
               <span className="rating-label">Sua avaliação:</span>
-              <StarRating rating={null} />
+              <InteractiveStarRating 
+                rating={userRating}
+                onRatingChange={setUserRating}
+                size={20}
+              />
             </div>
             
             <div className="rating-item">

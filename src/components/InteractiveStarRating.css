@@ -1,0 +1,60 @@
+.interactive-star-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stars-container {
+  display: flex;
+  gap: 4px;
+}
+
+.interactive-star-container {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.star-bg {
+  color: #ddd;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.star-fill {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #FFD700;
+  transition: opacity 0.2s ease;
+  line-height: 1;
+}
+
+.star-fill.half {
+  color: #FFD700;
+}
+
+.interactive-star-container:hover .star-bg {
+  color: #FFD700;
+  opacity: 0.3;
+}
+
+.rating-value {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Animação suave */
+.interactive-star-container {
+  transition: transform 0.1s ease;
+}
+
+.interactive-star-container:active {
+  transform: scale(0.95);
+}
