@@ -1,15 +1,20 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Auth.css';
 import tbtLogo from '../assets/tbt-logo.svg';
 
+const API_URL = 'http://localhost:3001/api';
+
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     displayName: '',
     password: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,9 +24,36 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Register attempt:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          username: formData.username,
+          displayName: formData.displayName
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao cadastrar');
+      }
+
+      navigate('/login', { state: { message: 'Cadastro realizado! Faça login.' } });
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,6 +62,8 @@ export default function RegisterPage() {
         <div className="auth-logo">
           <img src={tbtLogo} alt="TrackByTrack" className="auth-logo-img" />
         </div>
+        
+        {error && <div className="auth-error">{error}</div>}
         
         <form className="auth-form" onSubmit={handleSubmit}>
           <input
@@ -78,8 +112,8 @@ export default function RegisterPage() {
             </Link>
           </div>
           
-          <button type="submit" className="auth-button">
-            Cadastrar
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
           </button>
         </form>
       </div>

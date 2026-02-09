@@ -1,13 +1,16 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import HomePage from './pages/HomePage'
 import AlbumDetails from './pages/AlbumDetails'
 import SearchPage from './pages/SearchPage'
 import UserProfile from './pages/UserProfile'
+
 import Diary from './pages/Profile/Diary'
 import Reviews from './pages/Profile/Reviews'
 import ToListen from './pages/Profile/ToListen'
 import Lists from './pages/Profile/Lists'
+
 import Likes from './pages/Profile/Likes'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -26,14 +29,38 @@ function App() {
           <Route path="/lists" element={<div>Listas</div>} />
           <Route path="/friends" element={<div>Amigos</div>} />
           <Route path="/community" element={<div>Comunidade</div>} />
-          <Route path="/profile" element={<UserProfile />} />
-          
-          <Route path="/profile/diary" element={<Diary />} />
-          <Route path="/profile/reviews" element={<Reviews />} />
-          <Route path="/profile/to-listen" element={<ToListen />} />
-          <Route path="/profile/lists" element={<Lists />} />
-          
-          <Route path="/profile/likes" element={<Likes />} />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/profile/diary" element={
+            <ProtectedRoute>
+              <Diary />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/reviews" element={
+            <ProtectedRoute>
+              <Reviews />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/to-listen" element={
+            <ProtectedRoute>
+              <ToListen />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/lists" element={
+            <ProtectedRoute>
+              <Lists />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/profile/likes" element={
+            <ProtectedRoute>
+              <Likes />
+            </ProtectedRoute>
+          } />
           <Route path="/settings" element={<div>Configurações</div>} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/album/:id" element={<AlbumDetails />} />

@@ -101,6 +101,14 @@
   background-color: #fef2f2;
 }
 
+.navbar-dropdown-user {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #7418BA;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 /* Links de Navegação */
 .navbar-links {
   display: flex;

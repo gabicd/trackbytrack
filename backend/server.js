@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import discogsRoutes from './routes/discogs.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 
 // Rotas
 app.use('/api/discogs', discogsRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -47,6 +49,8 @@ app.listen(PORT, () => {
 📡 URL: http://localhost:${PORT}
 🔧 Endpoints:
    - GET /health
+   - POST /api/auth/register
+   - POST /api/auth/login
    - GET /api/discogs/search?artist=xxx&album=xxx
    - GET /api/discogs/release/:id
    - GET /api/discogs/cache/stats

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
 import tbtLogo from '../assets/tbt-logo.svg';
 import './Components.css';
 
@@ -8,6 +9,7 @@ export default function Navbar({ onSearch }) {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef(null);
+  const { user, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -61,6 +63,12 @@ export default function Navbar({ onSearch }) {
 
           {showMenu && (
             <div className="navbar-dropdown">
+              {isAuthenticated && user?.profile && (
+                <div className="navbar-dropdown-user">
+                  @{user.profile.username}
+                </div>
+              )}
+              
               <button
                 className="navbar-dropdown-item"
                 onClick={() => {
@@ -80,15 +88,28 @@ export default function Navbar({ onSearch }) {
                 Configurações
               </button>
               <div className="navbar-dropdown-divider"></div>
-              <button
-                className="navbar-dropdown-item navbar-dropdown-signout"
-                onClick={() => {
-                  // TODO: Implementar logout quando auth estiver pronto
-                  setShowMenu(false);
-                }}
-              >
-                Sair
-              </button>
+              {isAuthenticated ? (
+                <button
+                  className="navbar-dropdown-item navbar-dropdown-signout"
+                  onClick={() => {
+                    logout();
+                    navigate('/login');
+                    setShowMenu(false);
+                  }}
+                >
+                  Sair
+                </button>
+              ) : (
+                <button
+                  className="navbar-dropdown-item"
+                  onClick={() => {
+                    navigate('/login');
+                    setShowMenu(false);
+                  }}
+                >
+                  Entrar
+                </button>
+              )}
             </div>
           )}
         </div>
