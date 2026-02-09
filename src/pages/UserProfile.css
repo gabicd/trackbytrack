@@ -37,11 +37,34 @@
   justify-content: center;
 }
 
+.profile-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .profile-name h1 {
   font-size: 32px;
   font-weight: 700;
   color: #7418BA;
   margin: 0;
+}
+
+.edit-profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7418BA;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-profile-button:hover {
+  background-color: rgba(116, 24, 186, 0.1);
 }
 
 /* Stats Section */
@@ -75,8 +98,8 @@
   gap: 4px;
   margin-bottom: 32px;
   padding: 6px;
-  background-color: rgba(116, 24, 186, 0.1);
-  border-radius: 50px;
+  border: #7418BA 1px solid;
+  border-radius: 10px;
   overflow-x: auto;
   justify-content: center;
   max-width: fit-content;
@@ -97,15 +120,40 @@
 }
 
 .profile-tab:hover {
-  background-color: rgba(116, 24, 186, 0.1);
+  background-color: transparent;
   color: #7418BA;
+  position: relative;
+}
+
+.profile-tab:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  height: 2px;
+  background-color: #7418BA;
+  opacity: 0.5;
 }
 
 .profile-tab.active {
-  background-color: #ffffff;
   color: #7418BA;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-bottom: none;
+  border-radius: 50px;
+  position: relative;
+}
+
+.profile-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  height: 2px;
+  background-color: #7418BA;
 }
 
 /* Sections */

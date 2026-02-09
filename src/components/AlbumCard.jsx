@@ -1,4 +1,6 @@
-export default function AlbumCard({imgSrc, albumTitle, artistName, releaseYear, albumType, onClick}) {
+import StarRating from './StarRating.jsx'
+
+export default function AlbumCard({imgSrc, albumTitle, artistName, releaseYear, albumType, onClick, rating}) {
     return (
         <div className="cardWrapper" onClick={onClick} style={{cursor: onClick ? 'pointer' : 'default'}}>
             <img className="cardImg" src={imgSrc} alt={albumTitle} />
@@ -8,6 +10,7 @@ export default function AlbumCard({imgSrc, albumTitle, artistName, releaseYear, 
                 <p className="cardMeta">
                     {releaseYear} {albumType && `| ${albumType}`}
                 </p>
+                {rating && <StarRating rating={rating} />}
             </div>
         </div>
     )

@@ -93,6 +93,8 @@ class SpotifyService {
   }
 
   normalizeAlbum(album) {
+    //console.log('Nome do album:', album.name);
+    //console.log('Tipo do álbum:', album.album_type);
     return {
       id: album.id,
       name: album.name,

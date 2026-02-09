@@ -41,7 +41,7 @@ export function useDiscogsData(albumName, artistName) {
           year: release.year,
           genres: release.genre || [],
           styles: release.style || [],
-          labels: [...new Set((release.label || []).map(l => typeof l === 'string' ? l : l.name))].slice(0, 3),
+          labels: [...new Set((release.label || []).map(l => typeof l === 'string' ? l : l.name))].slice(0, 2),
           fromCache: response.fromCache
         };
       }

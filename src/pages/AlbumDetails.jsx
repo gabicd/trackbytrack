@@ -246,7 +246,7 @@ export default function AlbumDetails() {
               <span className="detail-label">Gravadora:</span>
               <span className="detail-value">
                 {discogsLoading ? 'Carregando...' : 
-                  (discogsData?.labels?.join(', ') || data.label || 'Não foi possível encontrar informações')}
+                  (discogsData?.labels?.[0] || data.label || 'Não foi possível encontrar informações')}
               </span>
             </div>
             
@@ -263,6 +263,7 @@ export default function AlbumDetails() {
                         {index < displayGenres.length - 1 ? ', ' : ''}
                       </span>
                     ))}
+                    
                     {discogsData?.styles?.length > 0 && (
                       <span className="detail-value styles">
                         {discogsData.styles.map((style, index) => (
@@ -349,19 +350,7 @@ export default function AlbumDetails() {
                     {track.artists.join(', ')}
                   </span>
                   <span className="track-duration">{track.duration}</span>
-                  <div className="track-rating">
-                    <InteractiveStarRating 
-                      rating={trackRatings[track.number] || 0}
-                      onRatingChange={(rating) => handleTrackRatingChange(track.number, rating)}
-                      size={12}
-                    />
-                  </div>
-                  <button className="track-notes-button">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                    </svg>
-                    Notas
-                  </button>
+
                 </div>
               ))}
             </div>
@@ -381,19 +370,6 @@ export default function AlbumDetails() {
                         {track.artists.join(', ')}
                       </span>
                       <span className="track-duration">{track.duration}</span>
-                      <div className="track-rating">
-                        <InteractiveStarRating 
-                          rating={trackRatings[`${disc.number}-${track.number}`] || 0}
-                          onRatingChange={(rating) => handleTrackRatingChange(`${disc.number}-${track.number}`, rating)}
-                          size={16}
-                        />
-                      </div>
-                      <button className="track-notes-button">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                        Notas
-                      </button>
                     </div>
                   ))}
                 </div>

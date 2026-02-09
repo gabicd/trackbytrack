@@ -89,9 +89,9 @@ const mockRecentLogs = [
     id: "log4",
     album: {
       id: "3m4n5o6p",
-      title: "30",
-      artist: "Adele",
-      coverUrl: "https://upload.wikimedia.org/wikipedia/en/7/76/Adele_-_30.png"
+      title: "DeBÍ TiRAR MáS FOToS",
+      artist: "Bad Bunny",
+      coverUrl: "https://lh3.googleusercontent.com/yBcpSTWxVqyJr7enMy7HFv14Yb8p1jI5AS5o49Cvbeyc6zjvCvdLn_0_iAxz50MqxLx6hQDngWBeaC26=w544-h544-l90-rj"
     },
     action: "listened",
     date: "2 dias atrás",
@@ -114,12 +114,10 @@ const mockRecentLogs = [
 // Tabs de navegação
 const profileTabs = [
   { id: 'profile', label: 'Perfil', path: '/profile', active: true },
-  { id: 'activity', label: 'Atividade', path: '/profile/activity', active: false },
   { id: 'diary', label: 'Diário', path: '/profile/diary', active: false },
   { id: 'reviews', label: 'Reviews', path: '/profile/reviews', active: false },
   { id: 'toListen', label: 'To-Listen', path: '/profile/to-listen', active: false },
   { id: 'lists', label: 'Listas', path: '/profile/lists', active: false },
-  { id: 'tags', label: 'Tags', path: '/profile/tags', active: false },
   { id: 'likes', label: 'Likes', path: '/profile/likes', active: false }
 ];
 
@@ -168,6 +166,11 @@ export default function UserProfile() {
           
           <div className="profile-name">
             <h1>{mockUser.name}</h1>
+            <button className="edit-profile-button" title="Editar perfil">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </button>
           </div>
         </div>
         
