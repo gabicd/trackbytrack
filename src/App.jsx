@@ -61,6 +61,7 @@ function App() {
               <Likes />
             </ProtectedRoute>
           } />
+          <Route path="/profile/:username" element={<UserProfile />} />
           <Route path="/settings" element={<div>Configurações</div>} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/album/:id" element={<AlbumDetails />} />

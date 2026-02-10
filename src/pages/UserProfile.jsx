@@ -1,19 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
+import { fetchUserProfile, fetchMyProfile } from '../services/userApi.js';
+import { getAvatarUrl } from '../services/uploadApi.js';
+import EditProfileModal from '../components/EditProfileModal.jsx';
 import './UserProfile.css';
 
-// Dados mockados do usuário
-const mockUser = {
-  name: "Seu user",
-  avatar: null, // placeholder
-  stats: {
-    albums: 10,
-    lists: 2,
-    followers: 20,
-    following: 36
-  }
-};
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'seu_cloud_name';
 
-// Dados mockados dos álbuns favoritos
+// Dados mockados dos álbuns favoritos (manter por enquanto)
 const mockFavoriteAlbums = [
   {
     id: "0vHPK6J5p42cNHyftCJhhT",
@@ -47,7 +42,7 @@ const mockFavoriteAlbums = [
   }
 ];
 
-// Dados mockados dos logs recentes (estilo Letterboxd)
+// Dados mockados dos logs recentes (manter por enquanto)
 const mockRecentLogs = [
   {
     id: "log1",
@@ -146,10 +141,101 @@ function StarRating({ rating }) {
 
 export default function UserProfile() {
   const navigate = useNavigate();
+  const { username } = useParams();
+  const { user: currentUser, isAuthenticated, updateUser } = useAuth();
+  
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Determinar se é o perfil próprio
+  const isOwnProfile = !username || (currentUser?.profile?.username === username);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        let data;
+        
+        if (!username) {
+          // Perfil próprio - usar /api/users/me
+          if (!isAuthenticated) {
+            setError('Faça login para ver seu perfil');
+            setLoading(false);
+            return;
+          }
+          data = await fetchMyProfile();
+        } else {
+          // Perfil de outro usuário - usar /api/users/:username/profile
+          data = await fetchUserProfile(username);
+        }
+        
+        setProfileData(data.user);
+      } catch (err) {
+        console.error('Error loading profile:', err);
+        setError(err.message || 'Erro ao carregar perfil');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [username, isAuthenticated, currentUser?.profile?.username]);
 
   const handleAlbumClick = (albumId) => {
     navigate(`/album/${albumId}`);
   };
+
+  const handleEditProfile = () => {
+    if (isOwnProfile) {
+      setIsEditModalOpen(true);
+    }
+  };
+
+  const handleProfileUpdate = (updatedUser) => {
+    setProfileData(updatedUser);
+    // Atualizar também no contexto de auth para refletir na navbar
+    updateUser({ profile: updatedUser });
+  };
+
+  if (loading) {
+    return (
+      <div className="user-profile-page">
+        <div className="profile-loading">
+          <div className="loading-spinner"></div>
+          <p>Carregando perfil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="user-profile-page">
+        <div className="profile-error">
+          <p>{error}</p>
+          {!isAuthenticated && (
+            <button onClick={() => navigate('/login')} className="btn-primary">
+              Fazer Login
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="user-profile-page">
+        <div className="profile-error">
+          <p>Perfil não encontrado</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="user-profile-page">
@@ -157,38 +243,57 @@ export default function UserProfile() {
       <div className="profile-header">
         <div className="profile-info">
           <div className="profile-avatar">
-            <div className="avatar-placeholder">
-              <svg viewBox="0 0 24 24" width="64" height="64" fill="#999">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
+            {profileData.avatarUrl ? (
+              <img 
+                src={profileData.avatarPublicId 
+                  ? getAvatarUrl(profileData.avatarPublicId, 400, CLOUDINARY_CLOUD_NAME) 
+                  : profileData.avatarUrl} 
+                alt={profileData.displayName}
+                className="avatar-image"
+              />
+            ) : (
+              <div className="avatar-placeholder">
+                <svg viewBox="0 0 24 24" width="64" height="64" fill="#999">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </div>
+            )}
           </div>
           
           <div className="profile-name">
-            <h1>{mockUser.name}</h1>
-            <button className="edit-profile-button" title="Editar perfil">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-              </svg>
-            </button>
+            <div className="profile-display-row">
+              <h2 className="profile-display-name">{profileData.displayName}</h2>
+              {isOwnProfile && (
+                <button 
+                  className="edit-profile-button" 
+                  title="Editar perfil"
+                  onClick={handleEditProfile}
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+            <h1 className="profile-username">@{profileData.username}</h1>
           </div>
         </div>
         
         <div className="profile-stats">
           <div className="stat-item">
-            <span className="stat-value">{mockUser.stats.albums}</span>
+            <span className="stat-value">{profileData.nListened || 0}</span>
             <span className="stat-label">Álbuns</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{mockUser.stats.lists}</span>
+            <span className="stat-value">{profileData.nLists || 0}</span>
             <span className="stat-label">Listas</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{mockUser.stats.followers}</span>
+            <span className="stat-value">{profileData.nFollowers || 0}</span>
             <span className="stat-label">Seguidores</span>
           </div>
           <div className="stat-item">
-            <span className="stat-value">{mockUser.stats.following}</span>
+            <span className="stat-value">{profileData.nFollowing || 0}</span>
             <span className="stat-label">Seguindo</span>
           </div>
         </div>
@@ -211,11 +316,13 @@ export default function UserProfile() {
       <section className="profile-section">
         <div className="section-header">
           <h2 className="section-title">All-Time Favs</h2>
-          <button className="edit-button" title="Editar">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-            </svg>
-          </button>
+          {isOwnProfile && (
+            <button className="edit-button" title="Editar">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </button>
+          )}
         </div>
         
         <div className="favorites-grid">
@@ -264,6 +371,15 @@ export default function UserProfile() {
           ))}
         </div>
       </section>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && isOwnProfile && (
+        <EditProfileModal
+          user={profileData}
+          onClose={() => setIsEditModalOpen(false)}
+          onUpdate={handleProfileUpdate}
+        />
+      )}
     </div>
   );
 }

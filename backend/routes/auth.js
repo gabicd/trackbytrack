@@ -121,7 +121,16 @@ router.post('/login', async (req, res) => {
       user: {
         id: data.user.id,
         email: data.user.email,
-        profile: profile || null
+        profile: profile ? {
+          username: profile.username,
+          displayName: profile.display_name,
+          avatarUrl: profile.avatar_url,
+          avatarPublicId: profile.avatar_public_id,
+          nListened: profile.n_listened,
+          nFollowers: profile.n_followers,
+          nFollowing: profile.n_following,
+          nLists: profile.n_lists
+        } : null
       }
     });
     

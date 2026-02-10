@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import { getAvatarUrl } from '../services/uploadApi.js';
 import tbtLogo from '../assets/tbt-logo.svg';
 import './Components.css';
+
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'seu_cloud_name';
 
 export default function Navbar({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,17 +50,27 @@ export default function Navbar({ onSearch }) {
             onClick={() => setShowMenu(!showMenu)}
           >
             <div className="navbar-avatar">
-              <svg
-                viewBox="0 0 24 24"
-                width="28"
-                height="28"
-                fill="none"
-                stroke="#7418BA"
-                strokeWidth="1.5"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-              </svg>
+              {user?.profile?.avatarUrl ? (
+                <img 
+                  src={user.profile.avatarPublicId 
+                    ? getAvatarUrl(user.profile.avatarPublicId, 100, CLOUDINARY_CLOUD_NAME)
+                    : user.profile.avatarUrl}
+                  alt={user.profile.username}
+                  className="navbar-avatar-img"
+                />
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  width="28"
+                  height="28"
+                  fill="none"
+                  stroke="#7418BA"
+                  strokeWidth="1.5"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                </svg>
+              )}
             </div>
           </button>
 

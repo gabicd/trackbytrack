@@ -200,6 +200,36 @@ CREATE TRIGGER trigger_update_album_counters
     AFTER INSERT OR UPDATE ON public.user_album_actions
     FOR EACH ROW EXECUTE FUNCTION public.update_album_counters();
 
+-- Trigger 5: Atualizar n_listened do usuário
+-- Regra: Quando usuário marca/desmarca álbum como ouvido, atualiza contador no perfil
+CREATE OR REPLACE FUNCTION public.update_user_listened_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Caso 1: Marcou como ouvido
+    IF (TG_OP = 'INSERT' AND NEW.is_listened = TRUE) OR 
+       (TG_OP = 'UPDATE' AND OLD.is_listened = FALSE AND NEW.is_listened = TRUE) THEN
+        
+        UPDATE public.profiles
+        SET n_listened = n_listened + 1
+        WHERE id = NEW.user_id;
+        
+    -- Caso 2: Desmarcou como ouvido
+    ELSIF TG_OP = 'UPDATE' AND OLD.is_listened = TRUE AND NEW.is_listened = FALSE THEN
+        
+        UPDATE public.profiles
+        SET n_listened = GREATEST(n_listened - 1, 0)
+        WHERE id = NEW.user_id;
+        
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_user_listened_count
+    AFTER INSERT OR UPDATE OF is_listened ON public.user_album_actions
+    FOR EACH ROW EXECUTE FUNCTION public.update_user_listened_count();
+
 -- ============================================
 -- 5. RLS POLICIES
 -- ============================================
