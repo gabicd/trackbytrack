@@ -4,6 +4,36 @@
   gap: 8px;
 }
 
+.star-rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-rating-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.clear-rating-btn:hover {
+  color: #dc2626;
+}
+
+.clear-rating-btn:active {
+  transform: scale(0.95);
+}
+
 .stars-container {
   display: flex;
   gap: 4px;

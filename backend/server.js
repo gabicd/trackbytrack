@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import discogsRoutes from './routes/discogs.js';
 import authRoutes from './routes/auth.js';
+import albumsRoutes from './routes/albums.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 // Rotas
 app.use('/api/discogs', discogsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/albums', albumsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -51,6 +53,10 @@ app.listen(PORT, () => {
    - GET /health
    - POST /api/auth/register
    - POST /api/auth/login
+   - POST /api/albums/action (protegido)
+   - GET /api/albums/:id/stats
+   - GET /api/albums/user-actions (protegido)
+   - GET /api/albums/:id/user-action (protegido)
    - GET /api/discogs/search?artist=xxx&album=xxx
    - GET /api/discogs/release/:id
    - GET /api/discogs/cache/stats

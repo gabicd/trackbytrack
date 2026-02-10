@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import StarRating from '../components/StarRating';
 import InteractiveStarRating from '../components/InteractiveStarRating';
 import spotifyService, { formatDuration } from '../services/spotifyService';
 import { useDiscogsData } from '../hooks/useDiscogsData';
+import { useAuth } from '../contexts/AuthContext.jsx';
+import { saveAlbumAction, getAlbumStats, getUserAlbumAction } from '../services/albumActions.js';
 import iconHeadphoneActive from '../assets/icon_headphone-active.svg';
 import iconHeadphoneInactive from '../assets/icon_headphone-inactive.svg';
 import heartActive from '../assets/heart-active.svg';
@@ -81,6 +83,7 @@ const processTracks = (tracks) => {
 
 export default function AlbumDetails() {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
   const [albumData, setAlbumData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,6 +92,11 @@ export default function AlbumDetails() {
   const [toListen, setToListen] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [trackRatings, setTrackRatings] = useState({});
+  
+  // Estados para estatísticas e ações do backend
+  const [albumStats, setAlbumStats] = useState(null);
+  const [actionError, setActionError] = useState('');
+  const [savingAction, setSavingAction] = useState(false);
 
   const handleTrackRatingChange = (trackKey, rating) => {
     setTrackRatings(prev => ({
@@ -140,6 +148,167 @@ export default function AlbumDetails() {
 
     fetchAlbum();
   }, [id]);
+
+  // Buscar ações do usuário e estatísticas do álbum (quando albumData estiver disponível)
+  useEffect(() => {
+    if (!id || !albumData) return;
+
+    const fetchAlbumInteractions = async () => {
+      try {
+        // Buscar estatísticas do álbum (sempre, mesmo sem login)
+        const stats = await getAlbumStats(id);
+        setAlbumStats(stats);
+
+        // Se usuário estiver logado, buscar ações dele
+        if (isAuthenticated) {
+          const userAction = await getUserAlbumAction(id);
+          if (userAction?.action) {
+            setListened(userAction.action.is_listened || false);
+            setLiked(userAction.action.is_liked || false);
+            setToListen(userAction.action.want_to_listen || false);
+            setUserRating(userAction.action.user_rating || 0);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching album interactions:', err);
+      }
+    };
+
+    fetchAlbumInteractions();
+  }, [id, albumData, isAuthenticated]);
+
+  // Handlers para salvar ações no backend
+  const handleListenedToggle = useCallback(async () => {
+    if (!isAuthenticated) {
+      setActionError('Faça login para registrar ações');
+      return;
+    }
+
+    const newState = !listened;
+    setListened(newState);
+    setActionError('');
+    setSavingAction(true);
+
+    try {
+      await saveAlbumAction(id, {
+        isListened: newState,
+        isLiked: liked,
+        wantToListen: toListen,
+        rating: userRating > 0 ? userRating : null
+      });
+      console.log('Listened status saved:', newState);
+
+      // Atualizar estatísticas
+      const stats = await getAlbumStats(id);
+      setAlbumStats(stats);
+    } catch (err) {
+      setListened(!newState);
+      setActionError(err.message || 'Erro ao salvar');
+      console.error('Error saving listened:', err);
+    } finally {
+      setSavingAction(false);
+    }
+  }, [id, isAuthenticated, listened, liked, toListen, userRating]);
+
+  const handleLikedToggle = useCallback(async () => {
+    if (!isAuthenticated) {
+      setActionError('Faça login para registrar ações');
+      return;
+    }
+
+    const newState = !liked;
+    setLiked(newState);
+    setActionError('');
+    setSavingAction(true);
+
+    try {
+      await saveAlbumAction(id, {
+        isListened: listened || newState,
+        isLiked: newState,
+        wantToListen: toListen,
+        rating: userRating > 0 ? userRating : null
+      });
+      console.log('Liked status saved:', newState);
+
+      // Se deu like, automaticamente marca como ouvido
+      if (newState && !listened) {
+        setListened(true);
+      }
+
+      // Atualizar estatísticas
+      const stats = await getAlbumStats(id);
+      setAlbumStats(stats);
+    } catch (err) {
+      setLiked(!newState);
+      setActionError(err.message || 'Erro ao salvar');
+      console.error('Error saving liked:', err);
+    } finally {
+      setSavingAction(false);
+    }
+  }, [id, isAuthenticated, liked, listened, toListen, userRating]);
+
+  const handleToListenToggle = useCallback(async () => {
+    if (!isAuthenticated) {
+      setActionError('Faça login para registrar ações');
+      return;
+    }
+
+    const newState = !toListen;
+    setToListen(newState);
+    setActionError('');
+    setSavingAction(true);
+
+    try {
+      await saveAlbumAction(id, {
+        isListened: listened,
+        isLiked: liked,
+        wantToListen: newState,
+        rating: userRating > 0 ? userRating : null
+      });
+      console.log('To-listen status saved:', newState);
+    } catch (err) {
+      setToListen(!newState);
+      setActionError(err.message || 'Erro ao salvar');
+      console.error('Error saving to-listen:', err);
+    } finally {
+      setSavingAction(false);
+    }
+  }, [id, isAuthenticated, toListen, listened, liked, userRating]);
+
+  const handleRatingChange = useCallback(async (rating) => {
+    if (!isAuthenticated) {
+      setActionError('Faça login para avaliar');
+      return;
+    }
+
+    setUserRating(rating);
+    setActionError('');
+    setSavingAction(true);
+
+    try {
+      await saveAlbumAction(id, {
+        isListened: true,
+        isLiked: liked,
+        wantToListen: toListen,
+        rating: rating
+      });
+      console.log('Rating saved:', rating);
+
+      // Se deu rating, automaticamente marca como ouvido
+      if (!listened) {
+        setListened(true);
+      }
+
+      // Atualizar estatísticas
+      const stats = await getAlbumStats(id);
+      setAlbumStats(stats);
+    } catch (err) {
+      setActionError(err.message || 'Erro ao salvar avaliação');
+      console.error('Error saving rating:', err);
+    } finally {
+      setSavingAction(false);
+    }
+  }, [id, isAuthenticated, liked, toListen, listened]);
 
   if (loading) {
     return (
@@ -207,24 +376,38 @@ export default function AlbumDetails() {
           <h1 className="album-title">{data.title}</h1>
           <p className="album-artist">{data.artist}</p>
           
+          {actionError && (
+            <div className="album-action-error">{actionError}</div>
+          )}
+          
           <div className="ratings-section">
             <div className="rating-item">
               <span className="rating-label">Sua avaliação:</span>
               <InteractiveStarRating 
                 rating={userRating}
-                onRatingChange={setUserRating}
-                
+                onRatingChange={handleRatingChange}
               />
-            {/*
-            {userRating > 0 && (
-              <span className="rating-value">{userRating}/5</span>
-            )}
-            */}  
             </div>
             
             <div className="rating-item">
               <span className="rating-label">Média dos users:</span>
-              <StarRating rating={null} />
+              <div className="rating-stars-with-count">
+                <StarRating rating={albumStats?.avgRating || 0} />
+                <span className="rating-count">
+                  {albumStats?.totalRatings ? `(${albumStats.totalRatings} avaliações)` : '(0 avaliações)'}
+                </span>
+              </div>
+            </div>
+
+            <div className="rating-item album-stats-row">
+              <div className="stat-with-icon">
+                <img src={iconHeadphoneActive} alt="Ouvido" className="stat-icon" />
+                <span className="stat-count">{albumStats?.totalListens || 0}</span>
+              </div>
+              <div className="stat-with-icon">
+                <img src={heartActive} alt="Likes" className="stat-icon" />
+                <span className="stat-count">{albumStats?.totalLikes || 0}</span>
+              </div>
             </div>
             
           </div>
@@ -304,15 +487,15 @@ export default function AlbumDetails() {
                 iconInactive={iconHeadphoneInactive}
                 label="Escutado"
                 isActive={listened}
-                onClick={() => setListened(!listened)}
+                onClick={handleListenedToggle}
               />
               
               <ActionButton
                 iconActive={heartActive}
                 iconInactive={heartInactive}
-                label="Gostei"
+                label="Like"
                 isActive={liked}
-                onClick={() => setLiked(!liked)}
+                onClick={handleLikedToggle}
               />
               
               <ActionButton
@@ -320,7 +503,7 @@ export default function AlbumDetails() {
                 iconInactive={tolistenInactive}
                 label="To-Listen"
                 isActive={toListen}
-                onClick={() => setToListen(!toListen)}
+                onClick={handleToListenToggle}
               />
             </div>
             

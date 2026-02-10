@@ -58,12 +58,27 @@ export default function InteractiveStarRating({ rating, onRatingChange, size = 2
     );
   };
 
+  const handleClearRating = () => {
+    onRatingChange(null);
+  };
+
   return (
     <div className="interactive-star-rating">
-      <div className="stars-container">
-        {[1, 2, 3, 4, 5].map(starIndex => renderStar(starIndex))}
+      <div className="star-rating-wrapper">
+        <div className="stars-container">
+          {[1, 2, 3, 4, 5].map(starIndex => renderStar(starIndex))}
+        </div>
+        {rating > 0 && (
+          <button 
+            className="clear-rating-btn" 
+            onClick={handleClearRating}
+            title="Remover avaliação"
+            type="button"
+          >
+            ×
+          </button>
+        )}
       </div>
-
     </div>
   );
 }
